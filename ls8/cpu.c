@@ -76,6 +76,15 @@ void cpu_run(struct cpu *cpu)
     unsigned char operandA = cpu_ram_read(cpu, cpu->pc + 1);
     unsigned char operandB = cpu_ram_read(cpu, cpu->pc + 2);
     // 4. switch() over it to decide on a course of action.
+    switch (instruction_register)
+    {
+    case HLT:
+      running = 0;
+      break;
+    default:
+      printf("Unknown instruction at %d: %d\n", cpu->pc, instruction_register);
+      break;
+    }
     // 5. Do whatever the instruction should do according to the spec.
     // 6. Move the PC to the next instruction.
   }
