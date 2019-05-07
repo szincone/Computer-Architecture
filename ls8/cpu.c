@@ -53,10 +53,10 @@ unsigned char cpu_ram_read(struct cpu *cpu, unsigned char address)
   return cpu->ram[address];
 }
 
-void cpu_ram_write(struct cpu *cpu, unsigned char address, unsigned char value)
+unsigned char cpu_ram_write(struct cpu *cpu, unsigned char address, unsigned char value)
 {
   cpu->ram[address] = value;
-  return NULL;
+  return cpu->ram[address];
 }
 /**
  * Run the CPU
@@ -69,7 +69,8 @@ void cpu_run(struct cpu *cpu)
   {
     // TODO
     // 1. Get the value of the current instruction (in address PC).
-    unsigned char instruction_register = cpu->ram[cpu->pc];
+    // unsigned char instruction_register = cpu->ram[cpu->pc];
+    unsigned char instruction_register = cpu_ram_read(cpu, cpu->pc);
     // 2. Figure out how many operands this next instruction requires
     unsigned int num_operands = instruction_register >> 6;
     // 3. Get the appropriate value(s) of the operands following this instruction
@@ -80,6 +81,10 @@ void cpu_run(struct cpu *cpu)
     {
     case HLT:
       running = 0;
+      break;
+    case LDI:
+      cpu->registers[operandA] = operandB;
+      cpu->pc += num_operands + 1;
       break;
     default:
       printf("Unknown instruction at %d: %d\n", cpu->pc, instruction_register);
@@ -96,10 +101,11 @@ void cpu_run(struct cpu *cpu)
 void cpu_init(struct cpu *cpu)
 {
   // TODO: Initialize the PC and other special registers
-  cpu = malloc(sizeof(*cpu));
   cpu->pc = 0;
   // *cpu->registers = malloc(8 * sizeof(cpu->registers[0]));
   // *cpu->ram = malloc(256 * sizeof(cpu->ram[0]));
+  // *cpu->registers = 0;
+  // *cpu->ram = 0;
   // same as above just lets use set value to 0
   memset(cpu->registers, 0, 8 * sizeof(cpu->registers[0]));
   memset(cpu->ram, 0, 256 * sizeof(cpu->ram[0]));
