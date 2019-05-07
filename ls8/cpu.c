@@ -86,6 +86,10 @@ void cpu_run(struct cpu *cpu)
       cpu->registers[operandA] = operandB;
       cpu->pc += num_operands + 1;
       break;
+    case PRN:
+      printf("Number %d\n", cpu->registers[operandA]);
+      cpu->pc += num_operands + 1;
+      break;
     default:
       printf("Unknown instruction at %d: %d\n", cpu->pc, instruction_register);
       break;
